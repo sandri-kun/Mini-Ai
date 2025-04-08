@@ -38,7 +38,7 @@ ${originalText}`;
     container.style.border = "none";
     container.style.boxShadow = "none";
     container.style.zIndex = 999999;
-    container.style.padding = "2px 48px 2px 2px"; // lebih besar karena ada 2 tombol
+    container.style.padding = "2px 72px 2px 2px"; // ruang untuk 3 tombol
     container.style.borderRadius = "4px";
     container.style.cursor = "move";
     container.style.transition = "all 0.2s ease";
@@ -48,13 +48,13 @@ ${originalText}`;
     replySpan.textContent = reply;
     container.appendChild(replySpan);
 
-    // Tombol copy
+    // Tombol Copy
     const copyBtn = document.createElement("button");
     copyBtn.textContent = "📋";
     copyBtn.title = "Salin jawaban";
     copyBtn.style.position = "absolute";
     copyBtn.style.top = "2px";
-    copyBtn.style.right = "24px";
+    copyBtn.style.right = "44px";
     copyBtn.style.fontSize = "10px";
     copyBtn.style.background = "transparent";
     copyBtn.style.border = "none";
@@ -75,7 +75,39 @@ ${originalText}`;
 
     container.appendChild(copyBtn);
 
-    // Tombol close
+    // Tombol Auto-Hide Toggle
+    let autoHideTimeout;
+    let autoHideEnabled = true;
+
+    const autoHideBtn = document.createElement("button");
+    autoHideBtn.textContent = "⏳";
+    autoHideBtn.title = "Nonaktifkan auto-tutup";
+    autoHideBtn.style.position = "absolute";
+    autoHideBtn.style.top = "2px";
+    autoHideBtn.style.right = "64px";
+    autoHideBtn.style.fontSize = "10px";
+    autoHideBtn.style.background = "transparent";
+    autoHideBtn.style.border = "none";
+    autoHideBtn.style.cursor = "pointer";
+    autoHideBtn.style.color = "rgba(128, 128, 128, 0.8)";
+    autoHideBtn.style.opacity = "0.5";
+    autoHideBtn.addEventListener("mouseenter", () => autoHideBtn.style.opacity = "1");
+    autoHideBtn.addEventListener("mouseleave", () => autoHideBtn.style.opacity = "0.5");
+
+    autoHideBtn.addEventListener("click", () => {
+      autoHideEnabled = false;
+      clearTimeout(autoHideTimeout);
+      autoHideBtn.textContent = "✅";
+      autoHideBtn.title = "Auto-tutup dinonaktifkan";
+      setTimeout(() => {
+        autoHideBtn.textContent = "⏳";
+        autoHideBtn.title = "Nonaktifkan auto-tutup";
+      }, 2000);
+    });
+
+    container.appendChild(autoHideBtn);
+
+    // Tombol Close
     const closeBtn = document.createElement("button");
     closeBtn.textContent = "✖";
     closeBtn.title = "Tutup";
@@ -97,7 +129,7 @@ ${originalText}`;
 
     container.appendChild(closeBtn);
 
-    // Expand saat diklik
+    // Expand saat diklik (kecuali tombol)
     container.addEventListener("click", (e) => {
       if (e.target.tagName === "BUTTON") return;
       const isExpanded = container.classList.contains("expanded");
@@ -114,7 +146,7 @@ ${originalText}`;
 
     document.body.appendChild(container);
 
-    // ==== DRAG & DROP ====
+    // DRAG & DROP
     let isDragging = false;
     let offsetX, offsetY;
 
@@ -139,16 +171,15 @@ ${originalText}`;
       isDragging = false;
     });
 
-    // Opsional: auto remove
-    setTimeout(() => {
-      container.remove();
+    // Auto remove (default aktif, bisa dibatalkan)
+    autoHideTimeout = setTimeout(() => {
+      if (autoHideEnabled) container.remove();
     }, 8000);
 
   } catch (error) {
     console.error("Gagal mengambil respons dari Gemini:", error);
   }
 });
-
 
 // ==== FITUR TAMBAHAN: AUTO-FETCH SAAT COPY (JIKA DIAKTIFKAN) ====
 chrome.storage.local.get(["autoFetchOnCopy"], (result) => {
@@ -172,7 +203,7 @@ chrome.storage.local.get("blurSelectionEnabled", (result) => {
     const style = document.createElement('style');
     style.textContent = `
       ::selection {
-        background-color: rgba(0, 255, 0, 0.03); /* hijau 3% opacity */
+        background-color: rgba(0, 255, 0, 0.03);
         color: inherit;
       }
     `;
