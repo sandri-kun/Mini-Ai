@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Pengaturan Ekstensi</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      width: 250px;
+      padding: 10px;
+    }
+    label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h3>Pengaturan</h3>
+
+  <label>
+    <input type="checkbox" id="toggle-copy-fetch" />
+    Aktifkan Auto-Fetch saat Copy
+  </label>
+
+  <label>
+    <input type="checkbox" id="toggle-blur-selection" />
+    Samarkan Select Text
+  </label>
+
+  <p style="font-size: 12px; color: #777;">
+    Jika aktif, teks yang disalin akan otomatis dikirim ke Gemini.<br />
+    Saat Samarkan Select Text aktif, warna seleksi jadi sangat transparan.
+  </p>
+
+  <script src="popup.js"></script>
+</body>
+</html>
