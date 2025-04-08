@@ -44,6 +44,23 @@ ${originalText}`;
     container.style.cursor = "move";
     container.textContent = reply;
 
+    // Tambahkan logika ekspansi saat diklik
+    container.style.transition = "all 0.2s ease";
+    container.style.whiteSpace = "pre-wrap"; // biar multiline kalau expand
+    // container.title = "Klik untuk melihat lebih banyak"; // tooltip
+    container.addEventListener("click", () => {
+      const isExpanded = container.classList.contains("expanded");
+      if (isExpanded) {
+        container.classList.remove("expanded");
+        container.style.height = "12px";
+        container.style.overflow = "hidden";
+      } else {
+        container.classList.add("expanded");
+        container.style.height = "auto";
+        container.style.overflow = "visible";
+      }
+    });
+
     document.body.appendChild(container);
 
     // ==== DRAG & DROP ====
