@@ -23,9 +23,9 @@ ${originalText}`;
     });
 
     const result = await response.json();
-
     const reply = result.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "Tidak ada respons dari Gemini.";
 
+    // Kontainer utama
     const container = document.createElement("div");
     container.style.position = "fixed";
     container.style.bottom = "8px";
@@ -34,20 +34,50 @@ ${originalText}`;
     container.style.height = "12px";
     container.style.fontSize = "6px";
     container.style.overflow = "hidden";
-    container.style.backgroundColor = "transparent";  // transparan penuh
-    container.style.color = "rgba(128, 128, 128, 0.8)"; // warna teks
+    container.style.backgroundColor = "transparent";
+    container.style.color = "rgba(128, 128, 128, 0.8)";
     container.style.border = "none";
-    container.style.boxShadow = "none";  // tanpa bayangan
+    container.style.boxShadow = "none";
     container.style.zIndex = 999999;
-    container.style.padding = "2px";
+    container.style.padding = "2px 24px 2px 2px";
     container.style.borderRadius = "4px";
     container.style.cursor = "move";
-    container.textContent = reply;
-
-    // Tambahkan logika ekspansi saat diklik
     container.style.transition = "all 0.2s ease";
-    container.style.whiteSpace = "pre-wrap"; // biar multiline kalau expand
-    // container.title = "Klik untuk melihat lebih banyak"; // tooltip
+    container.style.whiteSpace = "pre-wrap";
+
+    // Bungkus teks jawaban dalam span agar bisa dicopy
+    const replySpan = document.createElement("span");
+    replySpan.textContent = reply;
+    container.appendChild(replySpan);
+
+    // Tombol copy
+    const copyBtn = document.createElement("button");
+    copyBtn.textContent = "📋";
+    copyBtn.title = "Salin jawaban";
+    copyBtn.style.position = "absolute";
+    copyBtn.style.top = "2px";
+    copyBtn.style.right = "4px";
+    copyBtn.style.fontSize = "10px";
+    copyBtn.style.background = "transparent";
+    copyBtn.style.border = "none";
+    copyBtn.style.cursor = "pointer";
+    copyBtn.style.color = "rgba(128, 128, 128, 0.8)";
+    copyBtn.style.opacity = "0.5";
+    copyBtn.addEventListener("mouseenter", () => copyBtn.style.opacity = "1");
+    copyBtn.addEventListener("mouseleave", () => copyBtn.style.opacity = "0.5");
+
+    copyBtn.addEventListener("click", () => {
+      navigator.clipboard.writeText(replySpan.textContent)
+        .then(() => {
+          copyBtn.textContent = "✅";
+          setTimeout(() => copyBtn.textContent = "📋", 1500);
+        })
+        .catch(err => console.error("Gagal menyalin:", err));
+    });
+
+    container.appendChild(copyBtn);
+
+    // Klik untuk expand/contract
     container.addEventListener("click", () => {
       const isExpanded = container.classList.contains("expanded");
       if (isExpanded) {
@@ -68,6 +98,7 @@ ${originalText}`;
     let offsetX, offsetY;
 
     container.addEventListener("mousedown", (e) => {
+      if (e.target.tagName === "BUTTON") return; // biar tombol copy tetap bisa diklik
       isDragging = true;
       offsetX = e.clientX - container.getBoundingClientRect().left;
       offsetY = e.clientY - container.getBoundingClientRect().top;
@@ -87,6 +118,7 @@ ${originalText}`;
       isDragging = false;
     });
 
+    // Auto remove (bisa dihilangkan jika ingin tetap muncul)
     setTimeout(() => {
       container.remove();
     }, 8000);
@@ -112,7 +144,7 @@ chrome.storage.local.get(["autoFetchOnCopy"], (result) => {
   }
 });
 
-// Transparant select
+// ==== STYLING: SELEKSI TEKS TRANSPARAN ====
 chrome.storage.local.get("blurSelectionEnabled", (result) => {
   const enabled = result.blurSelectionEnabled ?? true;
   if (enabled) {
