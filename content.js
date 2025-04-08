@@ -25,7 +25,6 @@ ${originalText}`;
     const result = await response.json();
     const reply = result.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "Tidak ada respons dari Gemini.";
 
-    // Kontainer utama
     const container = document.createElement("div");
     container.style.position = "fixed";
     container.style.bottom = "8px";
@@ -39,13 +38,12 @@ ${originalText}`;
     container.style.border = "none";
     container.style.boxShadow = "none";
     container.style.zIndex = 999999;
-    container.style.padding = "2px 24px 2px 2px";
+    container.style.padding = "2px 48px 2px 2px"; // lebih besar karena ada 2 tombol
     container.style.borderRadius = "4px";
     container.style.cursor = "move";
     container.style.transition = "all 0.2s ease";
     container.style.whiteSpace = "pre-wrap";
 
-    // Bungkus teks jawaban dalam span agar bisa dicopy
     const replySpan = document.createElement("span");
     replySpan.textContent = reply;
     container.appendChild(replySpan);
@@ -56,7 +54,7 @@ ${originalText}`;
     copyBtn.title = "Salin jawaban";
     copyBtn.style.position = "absolute";
     copyBtn.style.top = "2px";
-    copyBtn.style.right = "4px";
+    copyBtn.style.right = "24px";
     copyBtn.style.fontSize = "10px";
     copyBtn.style.background = "transparent";
     copyBtn.style.border = "none";
@@ -77,8 +75,31 @@ ${originalText}`;
 
     container.appendChild(copyBtn);
 
-    // Klik untuk expand/contract
-    container.addEventListener("click", () => {
+    // Tombol close
+    const closeBtn = document.createElement("button");
+    closeBtn.textContent = "✖";
+    closeBtn.title = "Tutup";
+    closeBtn.style.position = "absolute";
+    closeBtn.style.top = "2px";
+    closeBtn.style.right = "4px";
+    closeBtn.style.fontSize = "10px";
+    closeBtn.style.background = "transparent";
+    closeBtn.style.border = "none";
+    closeBtn.style.cursor = "pointer";
+    closeBtn.style.color = "rgba(128, 128, 128, 0.8)";
+    closeBtn.style.opacity = "0.5";
+    closeBtn.addEventListener("mouseenter", () => closeBtn.style.opacity = "1");
+    closeBtn.addEventListener("mouseleave", () => closeBtn.style.opacity = "0.5");
+
+    closeBtn.addEventListener("click", () => {
+      container.remove();
+    });
+
+    container.appendChild(closeBtn);
+
+    // Expand saat diklik
+    container.addEventListener("click", (e) => {
+      if (e.target.tagName === "BUTTON") return;
       const isExpanded = container.classList.contains("expanded");
       if (isExpanded) {
         container.classList.remove("expanded");
@@ -98,7 +119,7 @@ ${originalText}`;
     let offsetX, offsetY;
 
     container.addEventListener("mousedown", (e) => {
-      if (e.target.tagName === "BUTTON") return; // biar tombol copy tetap bisa diklik
+      if (e.target.tagName === "BUTTON") return;
       isDragging = true;
       offsetX = e.clientX - container.getBoundingClientRect().left;
       offsetY = e.clientY - container.getBoundingClientRect().top;
@@ -118,7 +139,7 @@ ${originalText}`;
       isDragging = false;
     });
 
-    // Auto remove (bisa dihilangkan jika ingin tetap muncul)
+    // Opsional: auto remove
     setTimeout(() => {
       container.remove();
     }, 8000);
