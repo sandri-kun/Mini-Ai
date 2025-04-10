@@ -2,7 +2,7 @@
 window.addEventListener("gemini-request", async (e) => {
   const originalText = e.detail;
 
-  const prompt = `Jika merupakan soal pilihan ganda cukup jawab hanya pilihan yang benar beserta keterangan tanpa penjelasan. Jika bukan pilihan ganda jawablah seringkas mungkin.
+  const prompt = `Jawab dengan sangat ringkas dan on the poin.
 
 ${originalText}`;
 
