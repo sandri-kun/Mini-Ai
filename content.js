@@ -2,7 +2,7 @@
 window.addEventListener("gemini-request", async (e) => {
   const originalText = e.detail;
 
-  const prompt = `Jawab secara mendalam dan jawaban di akhir.
+  const prompt = `Pikirkan secara mendalam dan jawaban di akhir.
 
 ${originalText}`;
 
