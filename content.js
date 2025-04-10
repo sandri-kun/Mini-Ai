@@ -2,7 +2,7 @@
 window.addEventListener("gemini-request", async (e) => {
   const originalText = e.detail;
 
-  const prompt = `Jawab dengan sangat ringkas dan on the poin.
+  const prompt = `Jawab secara mendalam dan jawaban di akhir.
 
 ${originalText}`;
 
@@ -30,7 +30,7 @@ ${originalText}`;
     container.style.bottom = "8px";
     container.style.right = "20px";
     container.style.width = "300px";
-    container.style.height = "12px";
+    container.style.height = "40px";
     container.style.fontSize = "6px";
     container.style.overflow = "hidden";
     container.style.backgroundColor = "transparent";
@@ -38,15 +38,27 @@ ${originalText}`;
     container.style.border = "none";
     container.style.boxShadow = "none";
     container.style.zIndex = 999999;
-    container.style.padding = "2px 72px 2px 2px"; // ruang untuk 3 tombol
+    container.style.padding = "2px 72px 2px 2px";
     container.style.borderRadius = "4px";
     container.style.cursor = "move";
     container.style.transition = "all 0.2s ease";
     container.style.whiteSpace = "pre-wrap";
 
+    // Sembunyikan scrollbar
+    container.style.scrollbarWidth = "none"; // Firefox
+    container.style.msOverflowStyle = "none"; // IE 10+
+    container.style.overflowY = "auto";
+    container.style.setProperty("scrollbar-width", "none");
+    container.style.setProperty("::-webkit-scrollbar", "display: none");
+
     const replySpan = document.createElement("span");
     replySpan.textContent = reply;
     container.appendChild(replySpan);
+
+    // Scroll otomatis ke bawah setelah konten dimuat
+    requestAnimationFrame(() => {
+      container.scrollTop = container.scrollHeight;
+    });
 
     // Tombol Copy
     const copyBtn = document.createElement("button");
@@ -140,7 +152,10 @@ ${originalText}`;
       } else {
         container.classList.add("expanded");
         container.style.height = "auto";
-        container.style.overflow = "visible";
+        container.style.overflow = "auto";
+        requestAnimationFrame(() => {
+          container.scrollTop = container.scrollHeight;
+        });
       }
     });
 
