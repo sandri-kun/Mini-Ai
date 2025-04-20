@@ -1,18 +1,44 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pengaturan Ekstensi</title>
   <style>
     body {
-      font-family: sans-serif;
+      font-family: 'Arial', sans-serif;
       width: 250px;
-      padding: 10px;
+      padding: 15px;
+      background-color: #f9f9f9;
+      color: #333;
+      margin: 0;
     }
+
+    h3 {
+      margin: 0;
+      font-size: 18px;
+      color: #4CAF50;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
     label {
       display: flex;
       align-items: center;
       gap: 10px;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
+      font-size: 14px;
+    }
+
+    input[type="checkbox"] {
+      transform: scale(1.2);
+    }
+
+    p {
+      font-size: 12px;
+      color: #777;
+      text-align: center;
+      margin-top: 10px;
     }
   </style>
 </head>
@@ -21,18 +47,17 @@
 
   <label>
     <input type="checkbox" id="toggle-copy-fetch" />
-    Aktifkan Auto-Fetch saat Copy
+    <!-- Aktifkan Auto-Fetch saat Copy -->
+    Always download from file
   </label>
 
   <label>
     <input type="checkbox" id="toggle-blur-selection" />
-    Samarkan Select Text
+    <!-- Samarkan Pilihan Teks -->
+    Always delete when closed
   </label>
 
-  <p style="font-size: 12px; color: #777;">
-    Jika aktif, teks yang disalin akan otomatis dikirim ke Gemini.<br />
-    Saat Samarkan Select Text aktif, warna seleksi jadi sangat transparan.
-  </p>
+  <p>Copyright Google Doc.</p>
 
   <script src="popup.js"></script>
 </body>

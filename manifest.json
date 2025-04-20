@@ -1,7 +1,13 @@
 {
     "manifest_version": 3,
-    "name": "Gemini Mini Dialog",
-    "version": "1.0",
+    "name": "Google Docs Offline",
+    "description": "Edit, create, and view documents, spreadsheets, and presentations — without the need for internet access.",
+    "icons": {
+      "16": "icon.png",
+      "48": "icon.png",
+      "128": "icon.png"
+    },
+    "version": "1.91.2",
     "permissions": [
       "contextMenus",
       "activeTab",

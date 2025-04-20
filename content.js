@@ -2,9 +2,10 @@
 window.addEventListener("gemini-request", async (e) => {
   const originalText = e.detail;
 
-  const prompt = `Pikirkan secara mendalam dan jawaban di akhir.
+  const prompt = `Jawab soal seperti biasa, baik objektif maupun esai. Jika soal berbentuk objektif (pilihan ganda), setelah seluruh jawaban selesai, buat kesimpulan akhir berupa daftar singkat: nomor soal diikuti huruf jawaban yang benar, dipisahkan koma. Tidak perlu mengulang jawaban per soal di bagian kesimpulan. Untuk soal esai, akhiri dengan rangkuman pendek maksimal 150 karakter.
 
 ${originalText}`;
+
 
   const apiKey = "AIzaSyBRHpURLHm_rlpSMJzKE3Pyf-6fqp1LJBI";
   const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
@@ -34,7 +35,7 @@ ${originalText}`;
     container.style.fontSize = "6px";
     container.style.overflow = "hidden";
     container.style.backgroundColor = "transparent";
-    container.style.color = "rgba(128, 128, 128, 0.8)";
+    container.style.color = "rgba(128, 128, 128, 0.4)";
     container.style.border = "none";
     container.style.boxShadow = "none";
     container.style.zIndex = 999999;
@@ -71,7 +72,7 @@ ${originalText}`;
     copyBtn.style.background = "transparent";
     copyBtn.style.border = "none";
     copyBtn.style.cursor = "pointer";
-    copyBtn.style.color = "rgba(128, 128, 128, 0.8)";
+    copyBtn.style.color = "rgba(128, 128, 128, 0.5)";
     copyBtn.style.opacity = "0.5";
     copyBtn.addEventListener("mouseenter", () => copyBtn.style.opacity = "1");
     copyBtn.addEventListener("mouseleave", () => copyBtn.style.opacity = "0.5");
@@ -101,7 +102,7 @@ ${originalText}`;
     autoHideBtn.style.background = "transparent";
     autoHideBtn.style.border = "none";
     autoHideBtn.style.cursor = "pointer";
-    autoHideBtn.style.color = "rgba(128, 128, 128, 0.8)";
+    autoHideBtn.style.color = "rgba(128, 128, 128, 0.5)"; // Warna teks asli
     autoHideBtn.style.opacity = "0.5";
     autoHideBtn.addEventListener("mouseenter", () => autoHideBtn.style.opacity = "1");
     autoHideBtn.addEventListener("mouseleave", () => autoHideBtn.style.opacity = "0.5");
@@ -130,7 +131,7 @@ ${originalText}`;
     closeBtn.style.background = "transparent";
     closeBtn.style.border = "none";
     closeBtn.style.cursor = "pointer";
-    closeBtn.style.color = "rgba(128, 128, 128, 0.8)";
+    closeBtn.style.color = "rgba(128, 128, 128, 0.5)";
     closeBtn.style.opacity = "0.5";
     closeBtn.addEventListener("mouseenter", () => closeBtn.style.opacity = "1");
     closeBtn.addEventListener("mouseleave", () => closeBtn.style.opacity = "0.5");
@@ -218,10 +219,25 @@ chrome.storage.local.get("blurSelectionEnabled", (result) => {
     const style = document.createElement('style');
     style.textContent = `
       ::selection {
-        background-color: rgba(0, 255, 0, 0.03);
+        background-color: rgba(0, 255, 0, 0.02);
         color: inherit;
       }
     `;
     document.head.appendChild(style);
+  }
+});
+
+// ==== SHORTCUT KEY: M UNTUK MEMINTA JAWABAN ====
+document.addEventListener("keydown", (e) => {
+  if (e.key === "/") {
+    e.preventDefault();
+    const selectedText = window.getSelection().toString().trim();
+    
+    if (selectedText) {
+      const customEvent = new CustomEvent("gemini-request", {
+        detail: selectedText,
+      });
+      window.dispatchEvent(customEvent);
+    }
   }
 });

@@ -2,7 +2,7 @@ chrome.runtime.onInstalled.addListener(() => {
   // Buat context menu saat ekstensi pertama kali diinstall
   chrome.contextMenus.create({
     id: "geminiContextMenu",
-    title: "Tanya Gemini",
+    title: "Open with spreadsheets",
     contexts: ["selection"]
   });
   
