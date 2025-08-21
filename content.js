@@ -2,13 +2,13 @@
 window.addEventListener("gemini-request", async (e) => {
   const originalText = e.detail;
 
-  const prompt = `Jawab soal seperti biasa, baik objektif maupun esai. Jika soal berbentuk objektif (pilihan ganda), setelah seluruh jawaban selesai, buat kesimpulan akhir berupa daftar singkat: nomor soal diikuti huruf jawaban yang benar, dipisahkan koma. Tidak perlu mengulang jawaban per soal di bagian kesimpulan. Untuk soal esai, akhiri dengan rangkuman pendek maksimal 150 karakter.
+  const prompt = `Jika pertanyaan berbentuk objektif (pilihan ganda) cukup jawab dengan nomor soal diikuti huruf jawaban. Jika pertanyaan berbentuk esai, cukup jawab dengan kalimat jawaban.
 
 ${originalText}`;
 
 
-  const apiKey = "AIzaSyBRHpURLHm_rlpSMJzKE3Pyf-6fqp1LJBI";
-  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+  const apiKey = "AIzaSyA6ZI7-jIFgzGeacEqDPyYgTr2LXYhEhKA";
+  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${apiKey}`;
 
   try {
     const response = await fetch(endpoint, {
@@ -24,7 +24,7 @@ ${originalText}`;
     });
 
     const result = await response.json();
-    const reply = result.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "Tidak ada respons dari Gemini.";
+    const reply = result.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "Tidak ada respons dari Gemini. Coba lagi nanti.";
 
     const container = document.createElement("div");
     container.style.position = "fixed";
