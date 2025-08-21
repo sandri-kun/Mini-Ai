@@ -11,10 +11,14 @@ window.addEventListener("gemini-request", async (e) => {
 
 // Fungsi untuk membuat prompt
 function createPrompt(originalText) {
-  return `Jika pertanyaan berbentuk objektif (pilihan ganda) cukup jawab dengan nomor soal diikuti huruf jawaban. Jika pertanyaan berbentuk esai, cukup jawab dengan kalimat jawaban.
+  return `Jawab hanya dalam satu baris tanpa membuat baris baru atau enter. 
+Jika soal objektif (pilihan ganda), cukup tulis nomor soal diikuti huruf jawaban, dipisahkan koma. 
+Jika soal esai, cukup jawab dengan kalimat jawaban. 
+Jangan gunakan bullet, list, atau line break.
 
 ${originalText}`;
 }
+
 
 // Fungsi untuk fetch respons dari Gemini API
 async function fetchGeminiResponse(prompt) {
