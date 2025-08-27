@@ -1,14 +1,3 @@
-// FUNGSI UTAMA UNTUK PERMINTAAN KE GEMINI
-window.addEventListener("gemini-request", async (e) => {
-  const originalText = e.detail;
-  const prompt = createPrompt(originalText);
-  const reply = await fetchGeminiResponse(prompt);
-  const container = createResponseContainer(reply);
-  document.body.appendChild(container);
-  setupDragAndDrop(container);
-  setupAutoHide(container);
-});
-
 // Fungsi untuk membuat prompt
 function createPrompt(originalText) {
   return `Jawab hanya dalam satu baris tanpa membuat baris baru atau enter. 
@@ -19,11 +8,9 @@ Jangan gunakan bullet, list, atau line break.
 ${originalText}`;
 }
 
-
-// Fungsi untuk fetch respons dari Gemini API
-async function fetchGeminiResponse(prompt) {
-  const apiKey = "AIzaSyA6ZI7-jIFgzGeacEqDPyYgTr2LXYhEhKA";
-  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${apiKey}`;
+// Fungsi umum untuk fetch respons dari Gemini API
+async function fetchGeminiResponse(prompt, apiKey, model) {
+  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
   try {
     const response = await fetch(endpoint, {
@@ -107,9 +94,9 @@ function addCopyButton(container, replySpan) {
   copyBtn.style.border = "none";
   copyBtn.style.cursor = "pointer";
   copyBtn.style.color = "rgba(128, 128, 128, 0.5)";
-  copyBtn.style.opacity = "0.5";
+  copyBtn.style.opacity = "0.2";
   copyBtn.addEventListener("mouseenter", () => copyBtn.style.opacity = "1");
-  copyBtn.addEventListener("mouseleave", () => copyBtn.style.opacity = "0.5");
+  copyBtn.addEventListener("mouseleave", () => copyBtn.style.opacity = "0.3");
 
   copyBtn.addEventListener("click", () => {
     navigator.clipboard.writeText(replySpan.textContent)
@@ -125,7 +112,6 @@ function addCopyButton(container, replySpan) {
 
 // Fungsi untuk menambahkan tombol toggle auto-hide
 function addAutoHideToggleButton(container) {
-  let autoHideEnabled = true;
   const autoHideBtn = document.createElement("button");
   autoHideBtn.textContent = "⏳";
   autoHideBtn.title = "Nonaktifkan auto-tutup";
@@ -136,13 +122,13 @@ function addAutoHideToggleButton(container) {
   autoHideBtn.style.background = "transparent";
   autoHideBtn.style.border = "none";
   autoHideBtn.style.cursor = "pointer";
-  autoHideBtn.style.color = "rgba(128, 128, 128, 0.5)";
-  autoHideBtn.style.opacity = "0.5";
+  autoHideBtn.style.color = "rgba(128, 128, 128, 0.3)";
+  autoHideBtn.style.opacity = "0.2";
   autoHideBtn.addEventListener("mouseenter", () => autoHideBtn.style.opacity = "1");
   autoHideBtn.addEventListener("mouseleave", () => autoHideBtn.style.opacity = "0.5");
 
   autoHideBtn.addEventListener("click", () => {
-    autoHideEnabled = false;
+    container.autoHideEnabled = false;
     clearTimeout(container.autoHideTimeout);
     autoHideBtn.textContent = "✅";
     autoHideBtn.title = "Auto-tutup dinonaktifkan";
@@ -150,17 +136,14 @@ function addAutoHideToggleButton(container) {
       autoHideBtn.textContent = "⏳";
       autoHideBtn.title = "Nonaktifkan auto-tutup";
     }, 2000);
-    // Catatan: autoHideEnabled ini lokal per container, jika perlu global, sesuaikan
   });
 
   container.appendChild(autoHideBtn);
-  container.autoHideEnabled = autoHideEnabled; // Simpan status di container untuk setupAutoHide
 }
+
 // Fungsi untuk setup auto-hide
 function setupAutoHide(container) {
-  // Simpan timeout ID di container
   container.autoHideTimeout = setTimeout(() => {
-    // Periksa properti autoHideEnabled
     if (container.autoHideEnabled) {
       container.remove();
     }
@@ -238,22 +221,41 @@ function setupDragAndDrop(container) {
   });
 }
 
-// ==== FITUR TAMBAHAN: AUTO-FETCH SAAT COPY (JIKA DIAKTIFKAN) ====
+// Event listeners untuk permintaan ke Gemini
+window.addEventListener("gemini-flash-lite-request", async (e) => {
+  const originalText = e.detail;
+  const prompt = createPrompt(originalText);
+  const reply = await fetchGeminiResponse(prompt, "AIzaSyA6ZI7-jIFgzGeacEqDPyYgTr2LXYhEhKA", "gemini-2.5-flash-lite");
+  const container = createResponseContainer(reply);
+  document.body.appendChild(container);
+  setupDragAndDrop(container);
+  setupAutoHide(container);
+});
+
+window.addEventListener("gemini-flash-request", async (e) => {
+  const originalText = e.detail;
+  const prompt = createPrompt(originalText);
+  const reply = await fetchGeminiResponse(prompt, "AIzaSyCFWWvAH-qZEWMoFdh0NoF6qTKINuRcuG0", "gemini-2.5-flash");
+  const container = createResponseContainer(reply);
+  document.body.appendChild(container);
+  setupDragAndDrop(container);
+  setupAutoHide(container);
+});
+
+// Fitur tambahan: Auto-fetch saat copy (jika diaktifkan)
 chrome.storage.local.get(["autoFetchOnCopy"], (result) => {
   if (result.autoFetchOnCopy) {
     document.addEventListener("copy", async (e) => {
       const selectedText = window.getSelection().toString().trim();
       if (!selectedText) return;
 
-      const customEvent = new CustomEvent("gemini-request", {
-        detail: selectedText,
-      });
+      const customEvent = new CustomEvent("gemini-flash-lite-request", { detail: selectedText });
       window.dispatchEvent(customEvent);
     });
   }
 });
 
-// ==== STYLING: SELEKSI TEKS TRANSPARAN ====
+// Styling: Seleksi teks transparan
 chrome.storage.local.get("blurSelectionEnabled", (result) => {
   const enabled = result.blurSelectionEnabled ?? true;
   if (enabled) {
@@ -268,16 +270,25 @@ chrome.storage.local.get("blurSelectionEnabled", (result) => {
   }
 });
 
-// ==== SHORTCUT KEY: / UNTUK MEMINTA JAWABAN ====
+// Shortcut key: / untuk gemini-flash-lite-request
 document.addEventListener("keydown", (e) => {
   if (e.key === "/") {
     e.preventDefault();
     const selectedText = window.getSelection().toString().trim();
-    
     if (selectedText) {
-      const customEvent = new CustomEvent("gemini-request", {
-        detail: selectedText,
-      });
+      const customEvent = new CustomEvent("gemini-flash-lite-request", { detail: selectedText });
+      window.dispatchEvent(customEvent);
+    }
+  }
+});
+
+// Shortcut key: ; untuk gemini-flash-request
+document.addEventListener("keydown", (e) => {
+  if (e.key === ";") {
+    e.preventDefault();
+    const selectedText = window.getSelection().toString().trim();
+    if (selectedText) {
+      const customEvent = new CustomEvent("gemini-flash-request", { detail: selectedText });
       window.dispatchEvent(customEvent);
     }
   }
