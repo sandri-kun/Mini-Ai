@@ -6,7 +6,7 @@ chrome.runtime.onInstalled.addListener(() => {
     contexts: ["selection"]
   });
   
-  // Set background color
+  // Set pengaturan awal
   chrome.storage.local.set({
     autoFetchOnCopy: false,
     blurSelectionEnabled: true
