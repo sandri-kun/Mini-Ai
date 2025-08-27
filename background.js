@@ -28,5 +28,5 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 
 // Fungsi untuk dispatch event ke content.js
 function showDialog(selectedText) {
-  window.dispatchEvent(new CustomEvent("gemini-request", { detail: selectedText }));
+  window.dispatchEvent(new CustomEvent("gemini-flash-lite-request", { detail: selectedText }));
 }
