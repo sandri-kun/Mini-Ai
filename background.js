@@ -8,7 +8,7 @@ chrome.runtime.onInstalled.addListener(() => {
   
   // Set background color
   chrome.storage.local.set({
-    autoFetchOnCopy: true,
+    autoFetchOnCopy: false,
     blurSelectionEnabled: true
   }, () => {
     console.log("Pengaturan default diset.");

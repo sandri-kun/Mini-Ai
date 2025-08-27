@@ -41,7 +41,7 @@ function createResponseContainer(reply) {
   container.style.right = "20px";
   container.style.width = "300px";
   container.style.height = "40px";
-  container.style.fontSize = "6px";
+  container.style.fontSize = "7px";
   container.style.overflow = "hidden";
   container.style.backgroundColor = "transparent";
   container.style.color = "rgba(128, 128, 128, 0.1)";
@@ -63,7 +63,7 @@ function createResponseContainer(reply) {
 
   const replySpan = document.createElement("span");
   replySpan.textContent = reply;
-  replySpan.style.color = "rgba(128, 128, 128, 0.5)"; 
+  replySpan.style.color = "rgba(128, 128, 128, 0.7)"; 
   container.appendChild(replySpan);
 
   // Scroll otomatis ke bawah setelah konten dimuat
